@@ -23,7 +23,6 @@ class MatchTeamWidget(QWidget):
         self.layout.addWidget(self.team_score_widget)
         self.setLayout(self.layout)
 
-    
     def score(self):
         return self.team_score_widget.text()
 
@@ -59,6 +58,7 @@ class MatchWidget(QWidget):
             if (event.key() in (Qt.Key_Return,Qt.Key_Enter)
             and (self.top_team_widget.team_score_widget.hasFocus()
             or self.bottom_team_widget.team_score_widget.hasFocus())):
+                # Ajouter la mise à jour de la DB
                 self.display_results()
         return super().eventFilter(obj, event)
     
@@ -71,21 +71,21 @@ class MatchWidget(QWidget):
         elif self.top_team_widget.score() < self.bottom_team_widget.score():
                 text=f"Victoire de l'équipe {self.bottom_team_widget.team.name}"
         self.results.setText(text)
-        
-class MainWindow(QMainWindow):
-    def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent)
 
-        # Définition du titre de la fenêtre
-        self.setWindowTitle("Hello!")
-        
-        # à sortir!
-        skib=Team("Skib")
-        none=Team("None")
-        match=MatchWidget(parent=self,top_team=skib,bottom_team=none)
-        self.setCentralWidget(match)
 
 if __name__ == '__main__':
+    class MainWindow(QMainWindow):
+        def __init__(self, parent=None):
+            super(MainWindow, self).__init__(parent)
+
+            # Définition du titre de la fenêtre
+            self.setWindowTitle("Hello!")
+            
+            # à sortir!
+            skib=Team("Skib")
+            none=Team("None")
+            match=MatchWidget(parent=self,top_team=skib,bottom_team=none)
+            self.setCentralWidget(match)
     # Create the Qt Application
     app = QApplication(sys.argv)
 
