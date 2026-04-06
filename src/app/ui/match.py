@@ -2,7 +2,7 @@ import sys
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import QIntValidator
-from teams import *
+from app.logics.teams import *
 
 
 # à mettre dans les paramètres du tournoi: force à ne mettre
