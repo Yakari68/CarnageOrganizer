@@ -13,7 +13,7 @@ class Team():
     
     @classmethod
     def new(cls,name,registration_date=20260101212121):
-        self.name=name
-        self.registration_date=registration_date
-        self.id=self.build_id(self.registration_date)
+        cls.name=name
+        cls.registration_date=registration_date
+        cls.id=cls.build_id(cls.registration_date)
 #         Add to DB
