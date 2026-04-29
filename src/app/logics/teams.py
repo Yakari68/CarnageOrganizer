@@ -1,4 +1,4 @@
-from id_creator import id_creator
+from app.logics.id_creator import id_creator
 
 class Team():
     def build_id(self,date):
@@ -13,7 +13,9 @@ class Team():
     
     @classmethod
     def new(cls,name,registration_date=20260101212121):
-        cls.name=name
-        cls.registration_date=registration_date
-        cls.id=cls.build_id(cls.registration_date)
+        obj = cls()  # création de l'instance
+        obj.name = name
+        obj.registration_date = registration_date
+        obj.id = obj.build_id(obj.registration_date)
+        return obj
 #         Add to DB

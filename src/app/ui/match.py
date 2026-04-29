@@ -1,6 +1,8 @@
 import sys
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
+from PySide6.QtWidgets import (QApplication, QWidget, QPushButton,
+                               QLabel, QVBoxLayout, QHBoxLayout, QMainWindow,
+                               QLineEdit, QPushButton)
+from PySide6.QtCore import Signal, QEvent
 from PySide6.QtGui import QIntValidator
 from app.logics.teams import *
 
@@ -42,6 +44,7 @@ class MatchWidget(QWidget):
         
         # Crée le widget des résultats
         self.results=QLabel("En attente des scores")
+#         self.send_results_btn=QButton()
         results_widget=QWidget()
         results_layout=QVBoxLayout()
         results_layout.addWidget(self.results)
@@ -67,9 +70,9 @@ class MatchWidget(QWidget):
         if self.top_team_widget.score() == self.bottom_team_widget.score():
             pass
         elif self.top_team_widget.score() > self.bottom_team_widget.score():
-            text=f"Victoire de l'équipe {self.top_team_widget.team.name}"
+            text=f"L'équipe {self.top_team_widget.team.name} gagne"
         elif self.top_team_widget.score() < self.bottom_team_widget.score():
-                text=f"Victoire de l'équipe {self.bottom_team_widget.team.name}"
+                text=f"L'équipe {self.bottom_team_widget.team.name} gagne"
         self.results.setText(text)
 
 
