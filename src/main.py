@@ -1,6 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QMainWindow
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QIntValidator
 from app.logics.teams import *
 from app.ui.match import *
@@ -16,6 +16,7 @@ if __name__=="__main__":
             # à sortir!
             skib=Team.new("Skib")
             none=Team.new("None")
+            hava=Team.new("Hava")
             match=MatchWidget(parent=self,top_team=skib,bottom_team=none)
 #             match2=
             self.setCentralWidget(match)

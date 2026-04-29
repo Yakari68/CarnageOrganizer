@@ -2,7 +2,7 @@ import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QPushButton,
                                QLabel, QVBoxLayout, QHBoxLayout, QMainWindow,
                                QLineEdit, QPushButton)
-from PySide6.QtCore import Signal, QEvent
+from PySide6.QtCore import Qt, Signal, QEvent
 from PySide6.QtGui import QIntValidator
 from app.logics.teams import *
 
@@ -11,6 +11,7 @@ from app.logics.teams import *
 # que des entiers pour le score
 INT_ONLY = QIntValidator() 
 
+# Widget pour une équipe
 class MatchTeamWidget(QWidget):
     def __init__(self,parent=None,team=None):
         super().__init__(parent)
@@ -28,10 +29,15 @@ class MatchTeamWidget(QWidget):
     def score(self):
         return self.team_score_widget.text()
 
-
+# widget général des deux équipes concurrentes
+# /!\ à ajouter: signaux d'entrée (équipes) et sortie (équipe gagnante)
 class MatchWidget(QWidget):
+    winner = Signal(Team)
+    
     def __init__(self,top_team=None,bottom_team=None,parent=None):
         super().__init__(parent)
+        self.top_team=top_team
+        self.bottom_team=bottom_team
         # Crée les widgets des 2 équipes et le widget général
         self.top_team_widget=MatchTeamWidget(self,top_team)
         self.bottom_team_widget=MatchTeamWidget(self,bottom_team)
@@ -44,10 +50,11 @@ class MatchWidget(QWidget):
         
         # Crée le widget des résultats
         self.results=QLabel("En attente des scores")
-#         self.send_results_btn=QButton()
+        send_results_btn=QPushButton("Envoyer les résultats")
         results_widget=QWidget()
         results_layout=QVBoxLayout()
         results_layout.addWidget(self.results)
+        results_layout.addWidget(send_results_btn)
         results_widget.setLayout(results_layout)
         # Crée le layout horizontal pour le match
         layout=QHBoxLayout()
@@ -55,6 +62,9 @@ class MatchWidget(QWidget):
         layout.addWidget(results_widget)
         self.setLayout(layout)
         self.installEventFilter(self)
+        
+        # Ajoute l'interaction avec le bouton: envoie l'équipe victorieuse au prochain match
+        send_results_btn.clicked.connect(self.send_results)
         
     def eventFilter(self,obj,event):
         if (event.type() == QEvent.KeyPress) and (obj is self):
@@ -74,6 +84,17 @@ class MatchWidget(QWidget):
         elif self.top_team_widget.score() < self.bottom_team_widget.score():
                 text=f"L'équipe {self.bottom_team_widget.team.name} gagne"
         self.results.setText(text)
+    
+    def send_results(self):
+        if (self.top_team_widget.score() == self.bottom_team_widget.score()):
+            pass
+        else:
+            if(self.top_team_widget.score() > self.bottom_team_widget.score()):
+                self.winner.emit(self.top_team)
+                print(f"{self.top_team.name} passe au prochain match")
+            if(self.bottom_team_widget.score() > self.top_team_widget.score()):
+                self.winner.emit(self.bottom_team)
+                print(f"{self.bottom_team.name} passe au prochain match")
 
 
 if __name__ == '__main__':

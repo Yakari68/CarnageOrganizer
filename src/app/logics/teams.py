@@ -1,6 +1,11 @@
 from app.logics.id_creator import id_creator
 
 class Team():
+    def __init__(self):
+        self.id=None
+        self.name=None
+        self.registration_date=None
+
     def build_id(self,date):
         r=id_creator(date)
         print(r)
