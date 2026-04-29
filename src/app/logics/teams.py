@@ -13,8 +13,11 @@ class Team():
     
     @classmethod
     def from_db(cls,dboptionswhateveridk):
-        pass
-#         Import data from db
+        try:
+            connexion = sdlite3.connect("C:/Users/manon/Documents/ENSISA/Semestre2/Python/Projet/CarnageOrganizer/pays_projet.db")
+        except:
+            print("Problème avec le fichier")
+            quit()
     
     @classmethod
     def new(cls,name,registration_date=20260101212121):
