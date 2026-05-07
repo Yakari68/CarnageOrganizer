@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QPushButton,
                                QLabel, QVBoxLayout, QHBoxLayout, QMainWindow,
-                               QLineEdit, QPushButton)
+                               QLineEdit)
 from PySide6.QtCore import Qt, Signal, QEvent
 from PySide6.QtGui import QIntValidator
 from app.logics.teams import *
