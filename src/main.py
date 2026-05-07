@@ -1,7 +1,6 @@
 import sys
-from PySide6.QtWidgets import (QApplication, QWidget, QPushButton,
-                               QVBoxLayout, QHBoxLayout, QMainWindow,
-                               QLineEdit)
+from PySide6.QtWidgets import (QApplication, QWidget,
+                               QVBoxLayout, QHBoxLayout, QMainWindow)
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QIntValidator
 from app.logics.teams import Team
@@ -9,13 +8,22 @@ from app.ui.match import MatchWidget
 from random import shuffle
 
 if __name__=="__main__":
+#     class MainWindow(QMainWindow):
+#         def __init__(self, parent=None):
+#             super(MainWindow, self).__init__(parent)
+#             self.setWindowTitle("Test empty teams for later matchs")
+#             match=MatchWidget(parent=self)
+#             self.setCentralWidget(match)
+#     app = QApplication(sys.argv)
+#     window = MainWindow()
+#     window.show()
     class MainWindow(QMainWindow):
         def __init__(self, parent=None):
             super(MainWindow, self).__init__(parent)
 
             # Définition du titre de la fenêtre
             self.setWindowTitle("Hello!")
-            teamlist=[Team.new("Skib"),Team.new("None"),Team.new("Hava"),Team.new("Nagila"),Team.new("Verdamm")]
+            teamlist=[Team.new("Skib"),Team.new("None"),Team.new("Hava"),Team.new("Nagila")] # ,Team.new("Verdamm")]
             shuffle(teamlist)
             matchs_init=[MatchWidget(parent=self,top_team=teamlist[i],bottom_team=teamlist[i+1]) for i in range(0,len(teamlist)-1,2)]
             
@@ -23,12 +31,16 @@ if __name__=="__main__":
             main_widget=QWidget(self)
             layout=QVBoxLayout(main_widget)           
             
-            rounds=[QWidget(main_widget) for i in range(len(teamlist)+1)]
+            rounds=[QWidget(main_widget) for i in range(len(teamlist)//2)]
+            print(len(rounds))
             rounds_layouts=[QHBoxLayout(rounds[i]) for i in range(len(rounds))]
-            for i in range(len(rounds)):
-                for m in matchs_init:
-                    rounds_layouts[i].addWidget(m)
-            
+            for m in matchs_init:
+                rounds_layouts[0].addWidget(m)
+            next_row_to_add=len(matchs_init)//2
+            for i in range(1,len(rounds)):
+                for m in range(next_row_to_add):
+                    rounds_layouts[i].addWidget(MatchWidget(rounds[i]))
+                next_row_to_add//=2
             for i in range(len(rounds)):
                 rounds[i].setLayout(rounds_layouts[i])
 
@@ -44,3 +56,4 @@ if __name__=="__main__":
     window.show()
     # Run the main Qt loop
     sys.exit(app.exec())
+
