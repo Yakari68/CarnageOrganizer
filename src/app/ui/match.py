@@ -14,16 +14,17 @@ INT_ONLY = QIntValidator()
 class MatchTeamWidget(QWidget):
     def __init__(self,parent=None,team=None):
         super().__init__(parent)
+        self.team=team
+        self.team_label=QLabel()
+        
         # Crée les widgets pour une équipe normale
         if not team==None:
-            self.team=team
-            self.team_label=QLabel(self.team.name)
-            self.team_score_widget=QLineEdit(text="0",validator=INT_ONLY)
+            self.get_team(team)
         
         # Crée les widgets pour l'équipe vide
         else:
             self.team_label=QLabel("Waiting for previous match to end")
-            self.team_score_widget=QLineEdit(text="0",validator=INT_ONLY)
+        self.team_score_widget=QLineEdit(text="0",validator=INT_ONLY)
             
         # Crée un layout horizontal et ajoute les widgets, puis les affiche
         self.layout=QHBoxLayout(self)
@@ -33,7 +34,11 @@ class MatchTeamWidget(QWidget):
 
     def score(self):
         return self.team_score_widget.text()
-
+    
+    def get_team(self,team):
+        self.team=team
+        self.team_label=QLabel(self.team.name)
+        
 # widget général des deux équipes concurrentes
 # /!\ à ajouter: signaux d'entrée (équipes) et sortie (équipe gagnante)
 class MatchWidget(QWidget):
@@ -46,7 +51,7 @@ class MatchWidget(QWidget):
         # Crée les widgets des 2 équipes et le widget général
         self.top_team_widget=MatchTeamWidget(self,top_team)
         self.bottom_team_widget=MatchTeamWidget(self,bottom_team)
-        team_widget=QWidget()
+        team_widget=QWidget(self)
         # Crée le layout vertical pour les équipes
         team_layout=QVBoxLayout()
         team_layout.addWidget(self.top_team_widget)
@@ -62,7 +67,7 @@ class MatchWidget(QWidget):
         results_layout.addWidget(send_results_btn)
         results_widget.setLayout(results_layout)
         # Crée le layout horizontal pour le match
-        layout=QHBoxLayout()
+        layout=QHBoxLayout(self)
         layout.addWidget(team_widget)
         layout.addWidget(results_widget)
         self.setLayout(layout)

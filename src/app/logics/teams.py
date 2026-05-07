@@ -8,13 +8,12 @@ class Team():
 
     def build_id(self,date):
         r=id_creator(date)
-        print(r)
         return r
     
     @classmethod
     def from_db(cls,dboptionswhateveridk):
         try:
-            connexion = sdlite3.connect("C:/Users/manon/Documents/ENSISA/Semestre2/Python/Projet/CarnageOrganizer/pays_projet.db")
+            connexion = sdlite3.connect("./projet.db")
         except:
             print("Problème avec le fichier")
             quit()
