@@ -8,13 +8,15 @@ class Team():
 
     def build_id(self,date):
         r=id_creator(date)
-        print(r)
         return r
     
     @classmethod
     def from_db(cls,dboptionswhateveridk):
-        pass
-#         Import data from db
+        try:
+            connexion = sdlite3.connect("./projet.db")
+        except:
+            print("Problème avec le fichier")
+            quit()
     
     @classmethod
     def new(cls,name,registration_date=20260101212121):

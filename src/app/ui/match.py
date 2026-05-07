@@ -1,11 +1,10 @@
 import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QPushButton,
                                QLabel, QVBoxLayout, QHBoxLayout, QMainWindow,
-                               QLineEdit, QPushButton)
+                               QLineEdit)
 from PySide6.QtCore import Qt, Signal, QEvent
 from PySide6.QtGui import QIntValidator
 from app.logics.teams import *
-
 
 # à mettre dans les paramètres du tournoi: force à ne mettre
 # que des entiers pour le score
@@ -15,11 +14,18 @@ INT_ONLY = QIntValidator()
 class MatchTeamWidget(QWidget):
     def __init__(self,parent=None,team=None):
         super().__init__(parent)
-        # Crée les widgets
         self.team=team
-        self.team_label=QLabel(self.team.name)
+        self.team_label=QLabel()
+        
+        # Crée les widgets pour une équipe normale
+        if not team==None:
+            self.get_team(team)
+        
+        # Crée les widgets pour l'équipe vide
+        else:
+            self.team_label=QLabel("Waiting for previous match to end")
         self.team_score_widget=QLineEdit(text="0",validator=INT_ONLY)
-
+            
         # Crée un layout horizontal et ajoute les widgets, puis les affiche
         self.layout=QHBoxLayout(self)
         self.layout.addWidget(self.team_label)
@@ -28,20 +34,24 @@ class MatchTeamWidget(QWidget):
 
     def score(self):
         return self.team_score_widget.text()
-
+    
+    def get_team(self,team):
+        self.team=team
+        self.team_label=QLabel(self.team.name)
+        
 # widget général des deux équipes concurrentes
 # /!\ à ajouter: signaux d'entrée (équipes) et sortie (équipe gagnante)
 class MatchWidget(QWidget):
     winner = Signal(Team)
     
-    def __init__(self,top_team=None,bottom_team=None,parent=None):
+    def __init__(self,parent=None,top_team=None,bottom_team=None):
         super().__init__(parent)
         self.top_team=top_team
         self.bottom_team=bottom_team
         # Crée les widgets des 2 équipes et le widget général
         self.top_team_widget=MatchTeamWidget(self,top_team)
         self.bottom_team_widget=MatchTeamWidget(self,bottom_team)
-        team_widget=QWidget()
+        team_widget=QWidget(self)
         # Crée le layout vertical pour les équipes
         team_layout=QVBoxLayout()
         team_layout.addWidget(self.top_team_widget)
@@ -57,7 +67,7 @@ class MatchWidget(QWidget):
         results_layout.addWidget(send_results_btn)
         results_widget.setLayout(results_layout)
         # Crée le layout horizontal pour le match
-        layout=QHBoxLayout()
+        layout=QHBoxLayout(self)
         layout.addWidget(team_widget)
         layout.addWidget(results_widget)
         self.setLayout(layout)
@@ -77,24 +87,26 @@ class MatchWidget(QWidget):
     
     def display_results(self):
         text="En attente des scores"
-        if self.top_team_widget.score() == self.bottom_team_widget.score():
-            pass
-        elif self.top_team_widget.score() > self.bottom_team_widget.score():
-            text=f"L'équipe {self.top_team_widget.team.name} gagne"
-        elif self.top_team_widget.score() < self.bottom_team_widget.score():
-                text=f"L'équipe {self.bottom_team_widget.team.name} gagne"
-        self.results.setText(text)
+        if not (self.top_team and self.bottom_team)==None:
+            if self.top_team_widget.score() == self.bottom_team_widget.score():
+                pass
+            elif self.top_team_widget.score() > self.bottom_team_widget.score():
+                text=f"L'équipe {self.top_team_widget.team.name} gagne"
+            elif self.top_team_widget.score() < self.bottom_team_widget.score():
+                    text=f"L'équipe {self.bottom_team_widget.team.name} gagne"
+            self.results.setText(text)
     
     def send_results(self):
-        if (self.top_team_widget.score() == self.bottom_team_widget.score()):
-            pass
-        else:
-            if(self.top_team_widget.score() > self.bottom_team_widget.score()):
-                self.winner.emit(self.top_team)
-                print(f"{self.top_team.name} passe au prochain match")
-            if(self.bottom_team_widget.score() > self.top_team_widget.score()):
-                self.winner.emit(self.bottom_team)
-                print(f"{self.bottom_team.name} passe au prochain match")
+        if not (self.top_team and self.bottom_team)==None:
+            if (self.top_team_widget.score() == self.bottom_team_widget.score()):
+                pass
+            else:
+                if(self.top_team_widget.score() > self.bottom_team_widget.score()):
+                    self.winner.emit(self.top_team)
+                    print(f"{self.top_team.name} passe au prochain match")
+                if(self.bottom_team_widget.score() > self.top_team_widget.score()):
+                    self.winner.emit(self.bottom_team)
+                    print(f"{self.bottom_team.name} passe au prochain match")
 
 
 if __name__ == '__main__':
@@ -108,7 +120,8 @@ if __name__ == '__main__':
             # à sortir!
             skib=Team("Skib")
             none=Team("None")
-            match=MatchWidget(parent=self,top_team=skib,bottom_team=none)
+            match=MatchWidget(parent=self)
+#            match=MatchWidget(parent=self,top_team=skib,bottom_team=none)
             self.setCentralWidget(match)
     # Create the Qt Application
     app = QApplication(sys.argv)
