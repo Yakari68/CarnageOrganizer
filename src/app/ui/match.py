@@ -19,7 +19,7 @@ class MatchTeamWidget(QWidget):
         
         # Crée les widgets pour une équipe normale
         if not team==None:
-            self.get_team(team)
+            self.get_team()
         
         # Crée les widgets pour l'équipe vide
         else:
@@ -35,9 +35,8 @@ class MatchTeamWidget(QWidget):
     def score(self):
         return self.team_score_widget.text()
     
-    def get_team(self,team):
-        self.team=team
-        self.team_label=QLabel(self.team.name)
+    def get_team(self):
+        self.team_label.setText(self.team.name)
         
 # widget général des deux équipes concurrentes
 # /!\ à ajouter: signaux d'entrée (équipes) et sortie (équipe gagnante)
@@ -46,8 +45,6 @@ class MatchWidget(QWidget):
     
     def __init__(self,parent=None,top_team=None,bottom_team=None):
         super().__init__(parent)
-        self.top_team=top_team
-        self.bottom_team=bottom_team
         # Crée les widgets des 2 équipes et le widget général
         self.top_team_widget=MatchTeamWidget(self,top_team)
         self.bottom_team_widget=MatchTeamWidget(self,bottom_team)
@@ -60,11 +57,12 @@ class MatchWidget(QWidget):
         
         # Crée le widget des résultats
         self.results=QLabel("En attente des scores")
-        send_results_btn=QPushButton("Envoyer les résultats")
+        self.send_results_btn=QPushButton("Envoyer les résultats")
+        self.send_results_btn.clicked.connect(self.send_results)
         results_widget=QWidget()
         results_layout=QVBoxLayout()
         results_layout.addWidget(self.results)
-        results_layout.addWidget(send_results_btn)
+        results_layout.addWidget(self.send_results_btn)
         results_widget.setLayout(results_layout)
         # Crée le layout horizontal pour le match
         layout=QHBoxLayout(self)
@@ -72,9 +70,7 @@ class MatchWidget(QWidget):
         layout.addWidget(results_widget)
         self.setLayout(layout)
         self.installEventFilter(self)
-        
-        # Ajoute l'interaction avec le bouton: envoie l'équipe victorieuse au prochain match
-        send_results_btn.clicked.connect(self.send_results)
+        self.update_state()
         
     def eventFilter(self,obj,event):
         if (event.type() == QEvent.KeyPress) and (obj is self):
@@ -87,9 +83,9 @@ class MatchWidget(QWidget):
     
     def display_results(self):
         text="En attente des scores"
-        if not (self.top_team and self.bottom_team)==None:
+        if not self.top_team_widget.team==None and not self.bottom_team_widget.team==None:
             if self.top_team_widget.score() == self.bottom_team_widget.score():
-                pass
+                text="Égalité"
             elif self.top_team_widget.score() > self.bottom_team_widget.score():
                 text=f"L'équipe {self.top_team_widget.team.name} gagne"
             elif self.top_team_widget.score() < self.bottom_team_widget.score():
@@ -97,17 +93,39 @@ class MatchWidget(QWidget):
             self.results.setText(text)
     
     def send_results(self):
-        if not (self.top_team and self.bottom_team)==None:
+        if not (self.top_team_widget.team and self.bottom_team_widget.team)==None:
             if (self.top_team_widget.score() == self.bottom_team_widget.score()):
                 pass
             else:
                 if(self.top_team_widget.score() > self.bottom_team_widget.score()):
-                    self.winner.emit(self.top_team)
-                    print(f"{self.top_team.name} passe au prochain match")
+                    self.winner.emit(self.top_team_widget.team)
+                    print(f"{self.top_team_widget.team.name} passe au prochain match")
                 if(self.bottom_team_widget.score() > self.top_team_widget.score()):
-                    self.winner.emit(self.bottom_team)
-                    print(f"{self.bottom_team.name} passe au prochain match")
+                    self.winner.emit(self.bottom_team_widget.team)
+                    print(f"{self.bottom_team_widget.team.name} passe au prochain match")
+    
+    def top_team(self):
+        return self.top_team_widget.team
+    
+    def bottom_team(self):
+        return self.bottom_team_widget.team
+    
+    def set_top_team(self,team):
+        self.top_team_widget.team=team
+        self.top_team_widget.get_team()
+        
+    def set_bottom_team(self,team):
+        self.bottom_team_widget.team=team
+        self.bottom_team_widget.get_team()
 
+    def is_ready(self):
+        return not self.top_team==None and not self.bottom_team==None
+
+    def update_state(self):
+        ready = self.is_ready()
+        self.send_results_btn.setEnabled(ready)
+        if not ready:
+            self.results_label.setText("En attente des équipes")
 
 if __name__ == '__main__':
     class MainWindow(QMainWindow):
