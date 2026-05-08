@@ -15,15 +15,12 @@ class MatchTeamWidget(QWidget):
     def __init__(self,parent=None,team=None):
         super().__init__(parent)
         self.team=team
-        self.team_label=QLabel()
-        
-        # Crée les widgets pour une équipe normale
+#         Par défaut, affiche un texte d'attente.
+#         Remplit avec le nom de l'équipe si le match
+#         est un match du round 0 (première ligne de matchs)
+        self.team_label=QLabel("En attente du match précédent")
         if not team==None:
-            self.get_team()
-        
-        # Crée les widgets pour l'équipe vide
-        else:
-            self.team_label=QLabel("Waiting for previous match to end")
+            self.update_team_widget()
         self.team_score_widget=QLineEdit(text="0",validator=INT_ONLY)
             
         # Crée un layout horizontal et ajoute les widgets, puis les affiche
@@ -35,20 +32,19 @@ class MatchTeamWidget(QWidget):
     def score(self):
         return self.team_score_widget.text()
     
-    def get_team(self):
+    def update_team_widget(self):
         self.team_label.setText(self.team.name)
         
-# widget général des deux équipes concurrentes
-# /!\ à ajouter: signaux d'entrée (équipes) et sortie (équipe gagnante)
+# Widget général des deux équipes concurrentes
 class MatchWidget(QWidget):
     winner = Signal(Team)
     
     def __init__(self,parent=None,top_team=None,bottom_team=None):
         super().__init__(parent)
         # Crée les widgets des 2 équipes et le widget général
-        self.top_team_widget=MatchTeamWidget(self,top_team)
-        self.bottom_team_widget=MatchTeamWidget(self,bottom_team)
         team_widget=QWidget(self)
+        self.top_team_widget=MatchTeamWidget(team_widget,top_team)
+        self.bottom_team_widget=MatchTeamWidget(team_widget,bottom_team)
         # Crée le layout vertical pour les équipes
         team_layout=QVBoxLayout()
         team_layout.addWidget(self.top_team_widget)
@@ -112,11 +108,11 @@ class MatchWidget(QWidget):
     
     def set_top_team(self,team):
         self.top_team_widget.team=team
-        self.top_team_widget.get_team()
+        self.top_team_widget.update_team_widget()
         
     def set_bottom_team(self,team):
         self.bottom_team_widget.team=team
-        self.bottom_team_widget.get_team()
+        self.bottom_team_widget.update_team_widget()
 
     def is_ready(self):
         return not self.top_team==None and not self.bottom_team==None
