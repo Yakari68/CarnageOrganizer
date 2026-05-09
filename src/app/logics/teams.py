@@ -1,4 +1,4 @@
-from app.logics.id_creator import id_creator
+from app.database.database import TeamDB, engine_builder, load_session
 
 class Team():
     def __init__(self):
@@ -6,23 +6,24 @@ class Team():
         self.name=None
         self.registration_date=None
 
-    def build_id(self,date):
-        r=id_creator(date)
-        return r
-    
     @classmethod
-    def from_db(cls,dboptionswhateveridk):
+    def from_db(cls,db_name):
+        engine=engine_builder(db_name)
+        session = load_session(engine)
+        team_db = session.query(TeamDB).first()
         try:
-            connexion = sdlite3.connect("./projet.db")
+            return cls.new(
+                name=team_db.name,
+                registration_date=team_db.registration_date,
+                team_id=team_db.team_id
+            )
         except:
-            print("Problème avec le fichier")
-            quit()
-    
+            print("échec de la mission")
+
     @classmethod
-    def new(cls,name,registration_date=20260101212121):
+    def new(cls,name,registration_date=None,team_id=None):
         obj = cls()  # création de l'instance
         obj.name = name
         obj.registration_date = registration_date
-        obj.id = obj.build_id(obj.registration_date)
+        obj.id = team_id
         return obj
-#         Add to DB
