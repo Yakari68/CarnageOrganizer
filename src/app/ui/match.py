@@ -122,26 +122,3 @@ class MatchWidget(QWidget):
         self.send_results_btn.setEnabled(ready)
         if not ready:
             self.results_label.setText("En attente des équipes")
-
-if __name__ == '__main__':
-    class MainWindow(QMainWindow):
-        def __init__(self, parent=None):
-            super(MainWindow, self).__init__(parent)
-
-            # Définition du titre de la fenêtre
-            self.setWindowTitle("Hello!")
-            
-            # à sortir!
-            skib=Team("Skib")
-            none=Team("None")
-            match=MatchWidget(parent=self)
-#            match=MatchWidget(parent=self,top_team=skib,bottom_team=none)
-            self.setCentralWidget(match)
-    # Create the Qt Application
-    app = QApplication(sys.argv)
-
-    # Create and show the app
-    window = MainWindow()
-    window.show()
-    # Run the main Qt loop
-    sys.exit(app.exec())

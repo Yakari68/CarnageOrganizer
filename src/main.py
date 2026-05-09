@@ -13,8 +13,6 @@ if __name__=="__main__":
     class MainWindow(QMainWindow):
         def __init__(self, parent=None):
             super(MainWindow, self).__init__(parent)
-
-            # Définition du titre de la fenêtre
             self.setWindowTitle("Hello!")
             self.main=mainWidget(self)
             self.setCentralWidget(self.main)

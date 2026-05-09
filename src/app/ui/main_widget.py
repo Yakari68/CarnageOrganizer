@@ -11,6 +11,7 @@ from math import log2
 class mainWidget(QWidget):
     def __init__(self,parent):
         super().__init__(parent)
+        # Équipes de test, en attendant la db
 #             teamlist=[Team.new("Skib"),Team.new("None"),Team.new("Hava"),Team.new("Nagila")] # ,Team.new("Verdamm")]
         teamlist=[Team.new("Skib"),Team.new("None"),Team.new("Hava"),Team.new("Nagila") ,Team.new("Verdamm"),Team.new("Koftomi"),Team.new("Arsch"),Team.new("Matcha")]
         shuffle(teamlist)
