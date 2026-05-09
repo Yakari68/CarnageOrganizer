@@ -16,7 +16,11 @@ class mainWidget(QWidget):
         teamlist=[Team.new("Skib"),Team.new("None"),Team.new("Hava"),Team.new("Nagila") ,Team.new("Verdamm"),Team.new("Koftomi"),Team.new("Arsch"),Team.new("Matcha")]
         shuffle(teamlist)
         
-        
+# méthode à intégrer à terme pour créer un widget qui sera mis à jour quand la db équipe est prête
+# penser à ajouter un bouton pour lancer le match
+#         self.build_ui(teamlist)
+#         
+#     def build_ui(self,teamlist):
         matchs=[[MatchWidget(parent=self,top_team=teamlist[i],bottom_team=teamlist[i+1]) for i in range(0,len(teamlist),2)]]
         
         previous=0
