@@ -6,6 +6,10 @@ from PySide6.QtCore import Qt, Signal, QEvent
 from PySide6.QtGui import QIntValidator
 from app.logics.teams import *
 
+
+### TODO: Systèmes de blocages pour empêcher de modifier les scores après validation
+
+
 # à mettre dans les paramètres du tournoi: force à ne mettre
 # que des entiers pour le score
 INT_ONLY = QIntValidator() 

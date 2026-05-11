@@ -7,21 +7,17 @@ from app.logics.teams import Team
 from app.ui.match import MatchWidget
 from random import shuffle
 from math import log2
+from app.core.state import AppState
 
 class mainWidget(QWidget):
-    def __init__(self,parent):
+    def __init__(self,parent=None,state=None):
         super().__init__(parent)
-        # Équipes de test, en attendant la db
-#             teamlist=[Team.new("Skib"),Team.new("None"),Team.new("Hava"),Team.new("Nagila")] # ,Team.new("Verdamm")]
-        teamlist=[Team.new("Skib"),Team.new("None"),Team.new("Hava"),Team.new("Nagila") ,Team.new("Verdamm"),Team.new("Koftomi"),Team.new("Arsch"),Team.new("Matcha")]
-        shuffle(teamlist)
-        
-# méthode à intégrer à terme pour créer un widget qui sera mis à jour quand la db équipe est prête
-# penser à ajouter un bouton pour lancer le match
-#         self.build_ui(teamlist)
-#         
-#     def build_ui(self,teamlist):
-        matchs=[[MatchWidget(parent=self,top_team=teamlist[i],bottom_team=teamlist[i+1]) for i in range(0,len(teamlist),2)]]
+        self.state=state
+        self.teamlist=self.state.teamlist
+#         self.build_ui()
+
+    def build_ui(self):
+        matchs=[[MatchWidget(parent=self,top_team=self.teamlist[i],bottom_team=self.teamlist[i+1]) for i in range(0,len(self.teamlist),2)]]
         
         previous=0
         while len(matchs[previous])!=1:
@@ -30,7 +26,7 @@ class mainWidget(QWidget):
             previous+=1
         layout=QVBoxLayout(self)
 
-        rounds = [QWidget(self) for _ in range(int(log2(len(teamlist))))]
+        rounds = [QWidget(self) for _ in range(int(log2(len(self.teamlist))))]
         rounds_layouts=[QHBoxLayout(rounds[i]) for i in range(len(rounds))]
         for i in range(len(rounds)):
             for m in matchs[i]:
