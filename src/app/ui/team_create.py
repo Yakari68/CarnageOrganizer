@@ -58,16 +58,20 @@ class TeamManageWidget(QWidget):
         super().__init__(parent)
         self.state=state
         team_list=QLabel("Liste des équipes")
-        self.manage_layout=QVBoxLayout()
+        list_widget=QWidget(self)
+        self.list_layout=QVBoxLayout(list_widget)
+        list_widget.setLayout(self.list_layout)
+        self.manage_layout=QVBoxLayout(self)
         self.manage_layout.addWidget(team_list)
+        self.manage_layout.addWidget(list_widget)
         self.setLayout(self.manage_layout)
+        self.update_team_list()
     
     def update_team_list(self,db_name='MyTeams'):
         self.state.teamlist=[]
         session=load_session(db_name)
         team_db = session.query(TeamDB).all()
         session.close()
-        print(team_db)
         for team in team_db:
             self.state.teamlist.append(
                 Team.new(
@@ -76,12 +80,20 @@ class TeamManageWidget(QWidget):
                     team_id=team.team_id
                 )
             )
-        print(self.state.teamlist)
         label_list=[]
+        while self.list_layout.count():
+            item = self.list_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                self.list_layout.removeWidget(widget)
+                widget.deleteLater()
+    
         for team in self.state.teamlist:
             label_list.append(QLabel(team.name))
         for label in label_list:
-            self.manage_layout.addWidget(label)
+            self.list_layout.addWidget(label)
+            
+
         
 class manageWidget(QWidget):
     def __init__(self,parent=None,state=None):
