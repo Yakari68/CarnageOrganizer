@@ -89,7 +89,7 @@ class MatchWidget(QWidget):
             elif self.top_team_widget.score() > self.bottom_team_widget.score():
                 text=f"L'équipe {self.top_team_widget.team.name} gagne"
             elif self.top_team_widget.score() < self.bottom_team_widget.score():
-                    text=f"L'équipe {self.bottom_team_widget.team.name} gagne"
+                text=f"L'équipe {self.bottom_team_widget.team.name} gagne"
             self.results.setText(text)
     
     def send_results(self):

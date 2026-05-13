@@ -26,33 +26,33 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.main)
 
 
-# if __name__=="__main__":
-#     app = QApplication(sys.argv)
-#     state=AppState()
-#     session=load_session('MyTeams')
-#     team_db = session.query(TeamDB).all()
-#     session.close()
-#     print(team_db)
-#     for team in team_db:
-#         state.teamlist.append(
-#             Team.new(
-#                 name=team.name,
-#                 registration_date=team.registration_date,
-#                 team_id=team.team_id
-#             )
-#         )
-#     window = MainWindow(state=state)
-#     window.show()
-#     sys.exit(app.exec())
+if __name__=="__main__":
+    app = QApplication(sys.argv)
+    state=AppState()
+    session=load_session('MyTeams')
+    team_db = session.query(TeamDB).all()
+    session.close()
+    print(team_db)
+    for team in team_db:
+        state.teamlist.append(
+            Team.new(
+                name=team.name,
+                registration_date=team.registration_date,
+                team_id=team.team_id
+            )
+        )
+    window = MainWindow(state=state)
+    window.show()
+    sys.exit(app.exec())
 #  
  
 ### TESTS
-if __name__ == '__main__':
-    # Create the Qt Application
-    app = QApplication(sys.argv)
-    state=AppState()
-    # Create and show the app
-    window = manageWindow(state=state)
-    window.show()
-    # Run the main Qt loop
-    sys.exit(app.exec())
+# if __name__ == '__main__':
+#     # Create the Qt Application
+#     app = QApplication(sys.argv)
+#     state=AppState()
+#     # Create and show the app
+#     window = manageWindow(state=state)
+#     window.show()
+#     # Run the main Qt loop
+#     sys.exit(app.exec())
