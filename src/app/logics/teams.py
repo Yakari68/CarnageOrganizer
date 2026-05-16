@@ -1,6 +1,6 @@
 class Team():
     def __init__(self):
-        self.id=None
+        self.team_id=None
         self.name=None
         self.registration_date=None
 
@@ -9,5 +9,5 @@ class Team():
         obj = cls()  # création de l'instance
         obj.name = name
         obj.registration_date = registration_date
-        obj.id = team_id
+        obj.team_id = team_id
         return obj

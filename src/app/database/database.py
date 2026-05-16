@@ -14,13 +14,25 @@ def load_session(db_name):
     Session = sessionmaker(bind=engine)
     return Session()
 
-def add_team(name,registration_date,team_id,session):
+def add_team(db_name=None,name=None,registration_date=None,team_id=None):
+    session=load_session(db_name)
     session.add(TeamDB(name=name,registration_date=registration_date,team_id=team_id))
     session.commit()
+    session.close()
 
-def get_teams(db_name):
-    pass
+def remove_team(db_name=None,team_id=None):
+    session=load_session(db_name)
+    team = session.query(TeamDB).filter(TeamDB.team_id == team_id).first()
+    if team is not None:
+        session.delete(team)
+        session.commit()
+    session.close()
 
+def get_teams(db_name=None):
+    session=load_session(db_name)
+    team_db = session.query(TeamDB).all()
+    session.close()
+    return team_db
 
 """
 # Cette partie reste à des fins de documentation

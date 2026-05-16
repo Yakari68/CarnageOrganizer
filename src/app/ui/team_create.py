@@ -21,7 +21,6 @@ class TeamCreateWidget(QWidget):
         self.datetime_edit.setDateTime(QDateTime.currentDateTime())
         self.datetime_edit.setDisplayFormat("dd/MM/yyyy HH:mm")
         self.datetime_edit.setCalendarPopup(True)
-
         id_label=QLabel("Team ID :")
         self.id=QLabel(uuid4().hex)
         create_button = QPushButton("Create team")
@@ -38,13 +37,11 @@ class TeamCreateWidget(QWidget):
         self.setLayout(team_create_layout)
 
     def create_team(self,checked=False,db_name='MyTeams'):
-        session=load_session(db_name)
-        add_team(self.name.text(),
-                 self.datetime_edit.text(),
-                 self.id.text(),
-                 session)
-        
-        session.close()
+        add_team(db_name,
+            self.name.text(),
+            self.datetime_edit.text(),
+            self.id.text()
+        )
         self.emit_update_request()
 
     def emit_update_request(self):
@@ -69,9 +66,7 @@ class TeamManageWidget(QWidget):
     
     def update_team_list(self,db_name='MyTeams'):
         self.state.teamlist=[]
-        session=load_session(db_name)
-        team_db = session.query(TeamDB).all()
-        session.close()
+        team_db=get_teams(db_name)
         for team in team_db:
             self.state.teamlist.append(
                 Team.new(
@@ -80,7 +75,7 @@ class TeamManageWidget(QWidget):
                     team_id=team.team_id
                 )
             )
-        label_list=[]
+        teams_widget_list=[]
         while self.list_layout.count():
             item = self.list_layout.takeAt(0)
             widget = item.widget()
@@ -89,15 +84,29 @@ class TeamManageWidget(QWidget):
                 widget.deleteLater()
     
         for team in self.state.teamlist:
-            label_list.append(QLabel(team.name))
-        for label in label_list:
-            self.list_layout.addWidget(label)
+            print(team.name)
+            row_widget = QWidget()
+            row_layout = QHBoxLayout(row_widget)
+            name=QLabel(team.name)
+            delete_button = QPushButton("Suppr.")
+            delete_button.clicked.connect(
+                lambda checked=False, team_id=team.team_id: self.on_delete_team(db_name,team_id)
+            )
+            row_layout.addWidget(name)
+            row_layout.addWidget(delete_button)
+            row_widget.setLayout(row_layout)
+            teams_widget_list.append(row_widget)
+        for w in teams_widget_list:
+            self.list_layout.addWidget(w)
             
-
+    def on_delete_team(self,db_name,team_id):
+        remove_team(db_name,team_id)
+        self.update_team_list(db_name)
         
 class manageWidget(QWidget):
-    def __init__(self,parent=None,state=None):
-        super().__init__(parent)
+    def __init__(self,state=None):
+        super().__init__(None)
+        self.setWindowFlag(Qt.Window)
         team=TeamCreateWidget(parent=self)
         team_manage=TeamManageWidget(parent=self,state=state)
         mwlayout=QHBoxLayout()
@@ -106,11 +115,3 @@ class manageWidget(QWidget):
         self.setLayout(mwlayout)
         team.upd_req.connect(team_manage.update_team_list)
 
-class manageWindow(QMainWindow):
-    def __init__(self, parent=None, state=None):
-        super().__init__(parent)
-        self.state=state
-        # Définition du titre de la fenêtre
-        self.setWindowTitle("Création et gestion des équipes")
-        mw=manageWidget(parent=self,state=state)
-        self.setCentralWidget(mw)
