@@ -108,6 +108,7 @@ class manageWidget(QWidget):
         super().__init__(None)
         self.setWindowFlag(Qt.Window)
         team=TeamCreateWidget(parent=self)
+        self.setWindowTitle("Gestion d'équipes")
         team_manage=TeamManageWidget(parent=self,state=state)
         mwlayout=QHBoxLayout()
         mwlayout.addWidget(team)

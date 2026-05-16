@@ -21,7 +21,6 @@ class MainWindow(QMainWindow):
     
     def team_list_build(self):
         team_db = get_teams(self.state.db_name)
-        print(team_db)
         for team in team_db:
             self.state.teamlist.append(
                 Team.new(
