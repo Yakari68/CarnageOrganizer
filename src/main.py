@@ -1,6 +1,7 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton
 from app.ui.main_widget import mainWidget
+from app.ui.menu import Menu
 from app.core.state import AppState
 from app.logics.teams import Team
 # A trier une fois la barre de menu ajoutée
@@ -16,8 +17,10 @@ class MainWindow(QMainWindow):
         self.state=state
         self.setWindowTitle("CarnageOrganizer")
         self.main=mainWidget(self,state)
+        self.menu=Menu(self)
         self.ready_button=QPushButton("Ready ?")
         self.ready_button.clicked.connect(self.launch_tournament)
+        self.setMenuBar(self.menu)
         self.setCentralWidget(self.ready_button)
         
         
