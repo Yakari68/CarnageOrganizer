@@ -31,6 +31,7 @@ class Menu(QMenuBar):
         x=len(self.state.teamlist)
         if x > 0 and (x & (x - 1)) == 0:
             self.parent.main.build_ui()
+            self.parent.info_label.setText("Tournoi lancé!")
             self.parent.setCentralWidget(self.parent.main)
         else:
             self.parent.info_label.setText("Pas assez ou trop d'équipes! Le nombre d'équipes doit être une puissance de 2: 2, 4, 8, 16...")
