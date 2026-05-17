@@ -16,6 +16,7 @@ class mainWidget(QWidget):
         self.teamlist=self.state.teamlist.copy()
 
     def build_ui(self):
+        self.teamlist=self.state.teamlist.copy()
         shuffle(self.teamlist)
         matchs=[[MatchWidget(parent=self,top_team=self.teamlist[i],bottom_team=self.teamlist[i+1]) for i in range(0,len(self.teamlist),2)]]
         

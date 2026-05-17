@@ -85,7 +85,6 @@ class TeamManageWidget(QWidget):
                 widget.deleteLater()
     
         for team in self.state.teamlist:
-            print(team.name)
             row_widget = QWidget()
             row_layout = QHBoxLayout(row_widget)
             name=QLabel(team.name)
