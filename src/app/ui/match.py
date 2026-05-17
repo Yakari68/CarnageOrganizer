@@ -1,0 +1,122 @@
+import sys
+from PySide6.QtWidgets import (QApplication, QWidget, QPushButton,
+                               QLabel, QVBoxLayout, QHBoxLayout, QMainWindow,
+                               QLineEdit)
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QIntValidator
+from app.logics.teams import Team
+
+
+### TODO: Systèmes de blocages pour empêcher de modifier les scores après validation
+
+
+# à mettre dans les paramètres du tournoi: force à ne mettre
+# que des entiers pour le score
+INT_ONLY = QIntValidator() 
+
+# Widget pour une équipe
+class MatchTeamWidget(QWidget):
+    def __init__(self,parent=None,team=None):
+        super().__init__(parent)
+        self.team=team
+#         Par défaut, affiche un texte d'attente.
+#         Remplit avec le nom de l'équipe si le match
+#         est un match du round 0 (première ligne de matchs)
+        self.team_label=QLabel("En attente du match précédent")
+        if not team==None:
+            self.update_team_widget()
+        self.team_score_widget=QLineEdit(text="",validator=INT_ONLY)
+            
+        # Crée un layout horizontal et ajoute les widgets, puis les affiche
+        self.layout=QHBoxLayout(self)
+        self.layout.addWidget(self.team_label)
+        self.layout.addWidget(self.team_score_widget)
+        self.setLayout(self.layout)
+
+    def score(self):
+        return self.team_score_widget.text()
+    
+    def update_team_widget(self):
+        self.team_label.setText(self.team.name)
+        
+# Widget général des deux équipes concurrentes
+class MatchWidget(QWidget):
+    winner = Signal(Team)
+    
+    def __init__(self,parent=None,top_team=None,bottom_team=None):
+        super().__init__(parent)
+        # Crée les widgets des 2 équipes et le widget général
+        team_widget=QWidget(self)
+        self.top_team_widget=MatchTeamWidget(team_widget,top_team)
+        self.bottom_team_widget=MatchTeamWidget(team_widget,bottom_team)
+        # Crée le layout vertical pour les équipes
+        team_layout=QVBoxLayout()
+        team_layout.addWidget(self.top_team_widget)
+        team_layout.addWidget(self.bottom_team_widget)
+        team_widget.setLayout(team_layout)
+        
+        # Crée le widget des résultats
+        self.results=QLabel("En attente des scores")
+        self.send_results_btn=QPushButton("Envoyer les résultats")
+        self.send_results_btn.clicked.connect(self.send_results)
+        self.send_results_btn.setEnabled(False) # Par défaut, le bouton est désactivé
+        results_widget=QWidget()
+        results_layout=QVBoxLayout()
+        results_layout.addWidget(self.results)
+        results_layout.addWidget(self.send_results_btn)
+        results_widget.setLayout(results_layout)
+        # Crée le layout horizontal pour le match
+        layout=QHBoxLayout(self)
+        layout.addWidget(team_widget)
+        layout.addWidget(results_widget)
+        self.setLayout(layout)
+        self.update_state()
+    
+    def display_results(self):
+        text="En attente des scores"
+        if not self.top_team_widget.team==None and not self.bottom_team_widget.team==None:
+            if self.top_team_widget.score() == self.bottom_team_widget.score():
+                text="Égalité"
+            elif self.top_team_widget.score() > self.bottom_team_widget.score():
+                text=f"L'équipe {self.top_team_widget.team.name} gagne {self.top_team_widget.score()} à {self.bottom_team_widget.score()}"
+            elif self.top_team_widget.score() < self.bottom_team_widget.score():
+                text=f"L'équipe {self.bottom_team_widget.team.name} gagne {self.bottom_team_widget.score()} à {self.top_team_widget.score()}"
+            self.results.setText(text)
+    
+    def send_results(self):
+        self.display_results()
+        if not (self.top_team_widget.team and self.bottom_team_widget.team)==None:
+            if (self.top_team_widget.score() == self.bottom_team_widget.score()):
+                pass
+            else:
+                if(self.top_team_widget.score() > self.bottom_team_widget.score()):
+                    self.winner.emit(self.top_team_widget.team)
+                if(self.bottom_team_widget.score() > self.top_team_widget.score()):
+                    self.winner.emit(self.bottom_team_widget.team)
+            # Désactiver le bouton
+            self.send_results_btn.setEnabled(False)
+    
+    def top_team(self):
+        return self.top_team_widget.team
+    
+    def bottom_team(self):
+        return self.bottom_team_widget.team
+    
+    def set_top_team(self,team):
+        self.top_team_widget.team=team
+        self.top_team_widget.update_team_widget()
+        
+    def set_bottom_team(self,team):
+        self.bottom_team_widget.team=team
+        self.bottom_team_widget.update_team_widget()
+
+    def is_ready(self):
+        return not self.top_team==None and not self.bottom_team==None
+
+    def update_state(self):
+        ready = self.is_ready()
+        self.send_results_btn.setEnabled(ready)
+        if not ready:
+            self.results_label.setText("En attente des équipes")
+        else:
+            self.send_results_btn.setEnabled(True)
