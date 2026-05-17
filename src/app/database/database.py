@@ -33,17 +33,3 @@ def get_teams(db_name=None):
     team_db = session.query(TeamDB).all()
     session.close()
     return team_db
-
-"""
-# Cette partie reste à des fins de documentation
-
-if __name__=="__main__":
-    db_name="Test"
-    session = load_session(db_name)
-    names = ['Skib','None','Verdamm','Hava','Nagila']
-    for name in names:
-        add_team(TeamDB(name=name,registration_date=str(datetime.now()),team_id=uuid4().hex))
-    for e in session.query(TeamDB).all():
-        print(e.name)
-    session.close()
-"""

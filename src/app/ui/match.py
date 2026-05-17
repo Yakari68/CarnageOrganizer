@@ -2,9 +2,9 @@ import sys
 from PySide6.QtWidgets import (QApplication, QWidget, QPushButton,
                                QLabel, QVBoxLayout, QHBoxLayout, QMainWindow,
                                QLineEdit)
-from PySide6.QtCore import Qt, Signal, QEvent
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QIntValidator
-from app.logics.teams import *
+from app.logics.teams import Team
 
 
 ### TODO: Systèmes de blocages pour empêcher de modifier les scores après validation
@@ -71,15 +71,6 @@ class MatchWidget(QWidget):
         self.setLayout(layout)
         self.installEventFilter(self)
         self.update_state()
-        
-    def eventFilter(self,obj,event):
-        if (event.type() == QEvent.KeyPress) and (obj is self):
-            if (event.key() in (Qt.Key_Return,Qt.Key_Enter)
-            and (self.top_team_widget.team_score_widget.hasFocus()
-            or self.bottom_team_widget.team_score_widget.hasFocus())):
-                # Ajouter la mise à jour de la DB
-                self.display_results()
-        return super().eventFilter(obj, event)
     
     def display_results(self):
         text="En attente des scores"

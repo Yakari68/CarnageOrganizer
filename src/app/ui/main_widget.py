@@ -13,10 +13,10 @@ class mainWidget(QWidget):
     def __init__(self,parent=None,state=None):
         super().__init__(parent)
         self.state=state
-        self.teamlist=self.state.teamlist
-#         self.build_ui()
+        self.teamlist=self.state.teamlist.copy()
 
     def build_ui(self):
+        shuffle(self.teamlist)
         matchs=[[MatchWidget(parent=self,top_team=self.teamlist[i],bottom_team=self.teamlist[i+1]) for i in range(0,len(self.teamlist),2)]]
         
         previous=0

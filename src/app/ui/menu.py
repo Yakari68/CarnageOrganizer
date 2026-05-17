@@ -37,6 +37,6 @@ class Menu(QMenuBar):
         
     def launch_settings(self):
         self.parent.info_label.setText("Paramètres")
-        self.w=settingsWidget(state=self.state)
+        self.w=settingsWidget(parent=self.parent,state=self.state)
         self.w.show()
         
