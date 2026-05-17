@@ -11,6 +11,7 @@ CarnageOrganizer gère les nombres d'équipes en puissances de 2 et ne renvoie q
 2. Dans *"Paramètres"* : donnez le nom de votre base de données. Vous pouvez utiliser la base de données par défaut ```MyTeams```, qui contient 4 équipes prédéfinies, ou ```MyTeams8``` avec 8 équipes. Pensez à valider avant de fermer la pop-up.
 3. Dans *"Équipes"* : vous pouvez voir quelles équipes existent, les supprimer, en ajouter de nouvelles. Attention, il n'y a pas de confirmation, toute modification est **DÉFINITIVE !!!**
 4. Lancez le tournoi ! Donnez les scores, validez, la dernière équipe gagnante gagne le tournoi.
+5. Pour relancer le tournoi, relancez l'application et sélectionnez votre base de données dans *"Paramètres"*.
 
 # Améliorations futures
 #### Menu des équipes
